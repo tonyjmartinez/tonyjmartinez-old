@@ -1,0 +1,104 @@
+/* ==========================================================================
+   Rosette design tokens — succulents.info
+   The single source of truth for colour, type, space and shape.
+   Every text/background pairing meets WCAG AAA (7:1); this is checked by
+   `npm test` (tests/contrast.test.ts) and shown on /design-system/.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* Core */
+  --ink: #0e2318; /* deep agave green — text on every accent */
+  --paper: #fff7e8; /* warm sand */
+  --surface: #ffffff;
+  --text: var(--ink);
+  --text-muted: #3d5246; /* 7.9:1 on paper */
+  --line: var(--ink);
+  --shadow: var(--ink);
+
+  /* Accents — always paired with --on-accent text */
+  --bloom: #ff86ad; /* echeveria tip pink */
+  --sun: #ffd23f;
+  --mint: #9be8b4;
+  --lilac: #c8b5ff;
+  --coral: #ff8a5b;
+  --on-accent: #0e2318;
+
+  --focus: #ffd23f;
+  --focus-ring: #0e2318;
+
+  /* Type */
+  --font-display: 'Bricolage Grotesque Variable', 'Arial Black', system-ui, sans-serif;
+  --font-body: 'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible', system-ui, -apple-system,
+    'Segoe UI', Roboto, sans-serif;
+
+  --step--1: clamp(0.95rem, 0.92rem + 0.15vw, 1.02rem);
+  --step-0: clamp(1.125rem, 1.08rem + 0.2vw, 1.25rem);
+  --step-1: clamp(1.35rem, 1.24rem + 0.5vw, 1.6rem);
+  --step-2: clamp(1.6rem, 1.4rem + 1vw, 2.1rem);
+  --step-3: clamp(2rem, 1.6rem + 2vw, 3rem);
+  --step-4: clamp(2.1rem, 1.5rem + 3.6vw, 4.6rem);
+  --step-5: clamp(2.4rem, 1.3rem + 5.6vw, 6.4rem);
+
+  /* Space */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  /* Shape: thick outlines and hard, offset "sticker" shadows */
+  --border: 3px;
+  --border-thin: 2px;
+  --radius: 1.25rem;
+  --radius-sm: 0.75rem;
+  --radius-pill: 999px;
+  --lift-sm: 3px;
+  --lift-md: 4px;
+  --lift: 6px;
+  --lift-lg: 8px;
+
+  /* Motion (disabled by the reader's reduced-motion setting) */
+  --dur-fast: 120ms;
+  --dur: 180ms;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --max: 75rem;
+  --measure: 66ch;
+}
+
+/* Dark theme: deep night-garden green. Accent blocks keep dark ink text. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #0d1912;
+  --surface: #16261d;
+  --text: #f4efe2;
+  --text-muted: #c0d0c5;
+  --line: #f4efe2;
+  --shadow: #9be8b4;
+  --focus-ring: #f4efe2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --paper: #0d1912;
+    --surface: #16261d;
+    --text: #f4efe2;
+    --text-muted: #c0d0c5;
+    --line: #f4efe2;
+    --shadow: #9be8b4;
+    --focus-ring: #f4efe2;
+  }
+}
+
+/* Reader-controlled text size (set from the Display panel). */
+:root[data-text='large'] {
+  font-size: 112.5%;
+}
+:root[data-text='larger'] {
+  font-size: 125%;
+}
