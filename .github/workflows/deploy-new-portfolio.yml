@@ -1,0 +1,62 @@
+# Deploys the new portfolio (tonyjmartinez/tonyjmartinez, branch main) to
+# tonyjmartinez.com via this repo's Firebase Hosting secret.
+# Runs on demand and hourly, so merges to the new repo go live within the hour.
+name: Deploy new portfolio to Firebase Hosting
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firebase-live
+  cancel-in-progress: false
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          repository: tonyjmartinez/tonyjmartinez
+          ref: main
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - name: Write firebase.json (mirrors public/_headers)
+        run: |
+          cat > firebase.json <<'JSON'
+          {
+            "hosting": {
+              "public": "dist",
+              "ignore": ["firebase.json", "**/node_modules/**"],
+              "cleanUrls": true,
+              "headers": [
+                { "source": "/_astro/**", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+                { "source": "**", "headers": [
+                  { "key": "X-Content-Type-Options", "value": "nosniff" },
+                  { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+                  { "key": "X-Frame-Options", "value": "DENY" },
+                  { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
+                  { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
+                  { "key": "Cross-Origin-Resource-Policy", "value": "same-origin" },
+                  { "key": "Strict-Transport-Security", "value": "max-age=31536000" },
+                  { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'" }
+                ] }
+              ]
+            }
+          }
+          JSON
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TONYJMARTINEZ_SITE }}
+          channelId: live
+          projectId: tonyjmartinez-site
